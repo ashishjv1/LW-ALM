@@ -43,7 +43,7 @@ Compression of  Convolutional Layers in Attribute-Specific Localization Model us
 
 4. Use `"run_main.py"` to fine-tune compressed model <br />
    ``` 
-   python3 main.py --model=COMPRESSED --attr_num=26 --experiment=PA-100K --epoch=15 --model_path=path_to_compressed_model --checkpoint_save=path_to_save_checkpoints
+   python3 run_main.py --model=COMPRESSED --attr_num=26 --experiment=PA-100K --epoch=15 --model_path=path_to_compressed_model --checkpoint_save=path_to_save_checkpoints
    ```
 
 Besides,<br />
