@@ -15,22 +15,22 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Create Model From Ranks")
 parser.add_argument('--data_path',
-                    default='/trinity/home/a.jha/a.jha/scripts/Pedestrian_Attribute_Recognition/DATASET/PETA/PETA dataset/',
-                    type=str, required=False, help='Path to datset')
+                    default='~/Pedestrian_Attribute_Recognition/DATASET/PETA/PETA dataset/',
+                    type=str, required=True, help='Path to datset')
 parser.add_argument('--train_label',
-                    default='/trinity/home/a.jha/scripts/iccv19_attribute/data_list/peta/PETA_train_list.txt', type=str,
-                    required=False, help='Train Labels')
+                    default='~/data_list/peta/PETA_train_list.txt', type=str,
+                    required=True, help='Train Labels')
 parser.add_argument('--test_label',
-                    default='/trinity/home/a.jha/scripts/iccv19_attribute/data_list/peta/PETA_test_list.txt', type=str,
-                    required=False, help='Test Labels')
+                    default='~/data_list/peta/PETA_test_list.txt', type=str,
+                    required=True, help='Test Labels')
 parser.add_argument('--eps', default='1e-12', type=float, required=False, help='EPS Value')
 parser.add_argument('--model', default='full', type=str, required=True, help='Model to Test Full(F)/Compressed(c)')
 parser.add_argument('--attr_num', default='26', type=int, required=True, help='(35)PETA or (26)PA-100K')
 parser.add_argument('--experiment', default='PA-100K', type=str, required=True, help='PETA(PETA/peta) or PA-100K(PA)')
-parser.add_argument('--model_path', default='/trinity/home/a.jha/final_model/new_final_model_PA-100K_PER_FLOP.pth',
-                    type=str, required=False, help='path to saved Compressed model')
-parser.add_argument('--checkpoint_save', default='/trinity/home/a.jha/a.jha/scripts/compressed', type=str,
-                    required=False, help='checkpoint save path')
+parser.add_argument('--model_path', default='~/final_model/new_final_model_PA-100K_PER_FLOP.pth',
+                    type=str, required=True, help='path to saved Compressed model')
+parser.add_argument('--checkpoint_save', default='~/scripts/models', type=str,
+                    required=True, help='checkpoint save path')
 parser.add_argument('--checkpoint_load', default='', type=str, required=False, help='checkpoint load path')
 parser.add_argument('--epoch', default='15', type=int, required=True, help='Number of Epochs to train the Network')
 parser.add_argument('--loss_accu', default='/tmp/', type=str, required=False,

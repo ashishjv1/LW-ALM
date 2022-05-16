@@ -12,13 +12,13 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Create Model From Ranks")
 
-parser.add_argument('--full_model', default='/trinity/home/a.jha/final_model/new_final_model_PA-100K.pth', type=str,
+parser.add_argument('--full_model', default='~/final_model/new_final_model_PA-100K.pth', type=str,
                     required=False, help='Saved Full Model(.pth)')
-parser.add_argument('--save_path', default='/trinity/home/a.jha/final_model/new_final_model_PA-100K_TEST_PARTIAL.pth',
-                    type=str, required=False, help='Dir to save Partial Decomposed Model')
+parser.add_argument('--save_path', default='~/final_model/new_final_model_PA-100K_TEST_PARTIAL.pth',
+                    type=str, required=True, help='Dir to save Partial Decomposed Model')
 parser.add_argument('--model_type', default='full', type=str, required=True,
                     help='Create a partial(P) or a Full Model(F)')
-parser.add_argument('--ranks_dir', default='/trinity/home/a.jha/ranks_PA_100K/', type=str, required=False,
+parser.add_argument('--ranks_dir', default='~/ranks_PA_100K/', type=str, required=True,
                     help='Dir to load ranks and CPD-Tensors')
 parser.add_argument('--device', default='cuda', type=str, required=False, help='device to use for decompositions')
 parser.add_argument('--attr_num', default='26', type=int, required=True, help='(35)PETA or (26)PA-100K')
