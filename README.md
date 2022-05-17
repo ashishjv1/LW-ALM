@@ -22,12 +22,16 @@ Compression of  Convolutional Layers in Attribute-Specific Localization Model us
     python3 run_main.py --model=FULL --attr_num=26 --experiment=PA-100K --epoch=15 --checkpoint_save=path_to_save_checkpoints
    ```
 
-2. Use `"submit_decompositios.py"` to decompose layers using SVD or CPD-EPC. <br />
+2. Use `"main_decompositios.py"` to decompose layers using SVD or CPD-EPC. <br />
    ```
-   python3 submit_decompositios.py --dpath=path_to_dataset --mpath=path_to_saved_checkpoint --tlabels=path_to_train_labels --vlabels=path_to_val_labels --factors=both --attr_num=26 --experiment=PA-100K --device=cpu
+   python3 make_decompositios.py --dpath=path_to_dataset --mpath=path_to_saved_checkpoint --tlabels=path_to_train_labels --vlabels=path_to_val_labels --factors=both --attr_num=26 --experiment=PA-100K --device=cpu
+   ```
+   To Submit Slurm jobs:
+   ```
+   python3 submit_decompositios_slurm.py --dpath=path_to_dataset --mpath=path_to_saved_checkpoint --tlabels=path_to_train_labels --vlabels=path_to_val_labels --factors=both --attr_num=26 --experiment=PA-100K --device=cpu
    ```
 
-3. Use `"create_compressed_model.py"` to create "Fully-Compressed" or "Partially-Compressed" Model.
+4. Use `"create_compressed_model.py"` to create "Fully-Compressed" or "Partially-Compressed" Model.
    
    1. To create a Fully-Compressed Model:
       (Use create_compressed_model.py script)
@@ -41,7 +45,7 @@ Compression of  Convolutional Layers in Attribute-Specific Localization Model us
            python3 create_compressed_model.py --full_model=path_to_full_model --model_type=partial --save_path=path_to_save_model --ranks_dir=directory_to_load_factors&ranks --attr_num=26 or 35
            ```
 
-4. Use `"run_main.py"` to fine-tune compressed model <br />
+5. Use `"run_main.py"` to fine-tune compressed model <br />
    ``` 
    python3 main.py --model=COMPRESSED --attr_num=26 --experiment=PA-100K --epoch=15 --model_path=path_to_compressed_model --checkpoint_save=path_to_save_checkpoints
    ```
