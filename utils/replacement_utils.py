@@ -1,5 +1,4 @@
 import sys
-sys.path.append("/beegfs/home/a.jha/scripts/stable_lr_cnn_compression/")
 import torch
 from torchvision import datasets, transforms, models
 from torch import nn
