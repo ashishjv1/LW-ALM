@@ -45,8 +45,7 @@ if decomposition == "SVD" or decomposition == "svd":
     max_ranks = estimate_ranks_upper_bound(model, lnames_to_compress, nx=nx,
                                            input_img_size=(1, 3, 256, 128), device=device)
     for items in max_ranks:
-        if device == "cpu": 
-            command = f'sbatch run_cpu.sh layer_decomposition.py --layer={items} --rank={max_ranks[items]} --eps={args.eps} --device={args.device} --dpath={args.dpath}'
+        if device == "cpu":
 #              command = """sbatch run_cpu.sh layer_decomposition.py --layer={0} --rank={1} --eps={eps} --device={device} --dpath={dpath}""".format(items, max_ranks[items], **vars(args))
             command = """sbatch run_cpu.sh layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels, args.ranks_dir, args.experiment, args.attr_num)
         else:
