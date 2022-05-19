@@ -10,6 +10,7 @@ from PIL import Image
 import time
 import numpy as np
 import models as models
+import models_cpu as models_cpu
 import torch.backends.cudnn as cudnn
 import argparse
 
@@ -32,7 +33,8 @@ parser.add_argument('--model_path', default='~/final_model/new_final_model_PA-10
 parser.add_argument('--checkpoint_save', default='~/scripts/models', type=str,
                     required=True, help='checkpoint save path')
 parser.add_argument('--checkpoint_load', default='', type=str, required=False, help='checkpoint load path')
-parser.add_argument('--epoch', default='15', type=int, required=True, help='Number of Epochs to train the Network')
+parser.add_argument('--epoch', default='15', type=int, required=False, help='Number of Epochs to train the Network')
+parser.add_argument('--device', default='cuda', type=str, required=True, help='Device to Use CUDA or CPU')
 parser.add_argument('--loss_accu', default='/tmp/', type=str, required=False,
                     help='save losses and accuracy to a directory')
 args = parser.parse_args()
@@ -41,7 +43,7 @@ data_path = args.data_path
 train_list_path = args.train_label
 val_list_path = args.test_label
 EPS = args.eps
-
+device = args.device
 
 ####DATA LOADER CLASS###
 
@@ -59,7 +61,6 @@ class MultiLabelDataset(data.Dataset):
             if os.path.isfile(os.path.join(root, img_name)):
                 cur_label = tuple([int(v) for v in items])
                 images.append((img_name, cur_label))
-                images
             else:
                 print(os.path.join(root, img_name) + 'Not Found.')
         self.root = root
@@ -145,8 +146,11 @@ def train(train_loader, model, criterion, optimizer, epoch):
     end = time.time()
     for i, _ in enumerate(train_loader):
         input, target = _
-        target = target.cuda(non_blocking=True)
-        input = input.cuda(non_blocking=True)
+#         target = target.cuda(non_blocking=True)
+        
+        target = target.to(device)
+#         input = input.cuda(non_blocking=True)
+        input = input.to(device)
         output = model(input)
         bs = target.size(0)
 
@@ -197,8 +201,10 @@ def validate(val_loader, model, criterion, epoch):
     end = time.time()
     for i, _ in enumerate(val_loader):
         input, target = _
-        target = target.cuda(non_blocking=True)
-        input = input.cuda(non_blocking=True)
+#         target = target.cuda(non_blocking=True)
+        target - target.to(device)
+#         input = input.cuda(non_blocking=True)
+        input = input.to(device)
         output = model(input)
 
         bs = target.size(0)
@@ -257,8 +263,10 @@ def test(val_loader, model, attr_num, description):
 
     for i, _ in enumerate(val_loader):
         input, target = _
-        target = target.cuda(non_blocking=True)
-        input = input.cuda(non_blocking=True)
+#         target = target.cuda(non_blocking=True)
+        target - target.to(device)
+#         input = input.cuda(non_blocking=True)
+        input = inout.to(device)
         output = model(input)
         bs = target.size(0)
 
@@ -379,7 +387,7 @@ class Weighted_BCELoss(object):
                                          0.711711111111,
                                          0.173444444444,
                                          0.114844444444,
-                                         0.006]).cuda()
+                                         0.006]).to(device)
 
         elif experiment == 'peta' or experiment == 'PETA' or experiment == 'P':
             self.weights = torch.Tensor([0.5016,
@@ -416,7 +424,7 @@ class Weighted_BCELoss(object):
                                          0.5125,
                                          0.0838,
                                          0.4605,
-                                         0.0124]).cuda()
+                                         0.0124]).to(device)
         # self.weights = None
 
     def forward(self, output, target, epoch):
@@ -530,23 +538,32 @@ def main():
         batch_size=32, shuffle=False, num_workers=4, pin_memory=True)
 
     if args.model == 'full' or args.model == 'FULL' or args.model == 'f' or args.model == 'F':
-
-        model = models.__dict__["inception_iccv"](pretrained=True, num_classes=attr_num)
-        model = torch.nn.DataParallel(model).cuda()
-        print('Number of model parameters: {}'.format(
-            sum([p.numel() for p in model.parameters()])))
-        print('')
+        if args.device == "cuda":
+            model = models.__dict__["inception_iccv"](pretrained=True, num_classes=attr_num)
+            model = torch.nn.DataParallel(model).to(device)
+            print('Number of model parameters: {}'.format(
+                sum([p.numel() for p in model.parameters()])))
+            print('')
+        else:
+            model = models_cpu.__dict__["inception_iccv"](pretrained=True, num_classes=attr_num)
+#             model = torch.nn.DataParallel(model).to(device)
+            print('Number of model parameters: {}'.format(
+                sum([p.numel() for p in model.parameters()])))
+            print('')
 
     else:
 
         PATH = args.model_path
         model = torch.load(PATH)
-        model.eval()
-        model = torch.nn.DataParallel(model).cuda()
-        print('Number of model parameters: {}'.format(
-            sum([p.numel() for p in model.parameters()])))
-        print('')
-
+        
+        if args.device == "cuda":
+            model.eval()
+            model = torch.nn.DataParallel(model).to(device)
+            print('Number of model parameters: {}'.format(
+                sum([p.numel() for p in model.parameters()])))
+            print('')
+        else:
+            model.eval()
     # optionally resume from a checkpoint
 
     if resume_check:
@@ -594,9 +611,10 @@ def main():
 
 
 if __name__ == '__main__':
-    train_loss, validation_loss, accuracy = main()
-    save_directory = args.loss_accu + '/'
-    if not os.path.exists(save_directory):
-        os.makedirs(save_directory)
-    save_as_dict = {"training_losses": train_loss, "validation_losses": validation_loss, "accuracy": accuracy}
-    np.save(save_directory + "Losses_and_Accuracy", save_as_dict)
+    main()
+#     train_loss, validation_loss, accuracy = main()
+#     save_directory = args.loss_accu + '/'
+#     if not os.path.exists(save_directory):
+#         os.makedirs(save_directory)
+#     save_as_dict = {"training_losses": train_loss, "validation_losses": validation_loss, "accuracy": accuracy}
+#     np.save(save_directory + "Losses_and_Accuracy", save_as_dict)
