@@ -57,3 +57,7 @@ example:
 ```
 python3 layer_decomposition.py --layer=main_branch.conv1_7x7_s2 --rank=81 --eps=0.002 --device=cpu --dpath=dataset_path --mpath=model_path --tlabels=data_train_label --vlabels=data_val/test_label --experiment=PA-100K --attr_num=26
 ```
+Additionally,
+1. The pretrained model for BNInception can be found here: https://www.dropbox.com/sh/z4cnegl1p1tsn8j/AADYxmDA5Of24vtjx3PK1o7Ba?dl=0
+2. If there are problems installing flopco directly from pip. Clone the repo: `git clone https://github.com/juliagusak/flopco-pytorch.git`
+`cd /flopco-pytorch` `mv flopco ../` 
