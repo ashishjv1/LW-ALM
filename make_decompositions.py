@@ -47,11 +47,11 @@ if decomposition == "SVD" or decomposition == "svd":
                                            input_img_size=(1, 3, 256, 128), device=device)
     for items in max_ranks:
         if device == "cpu":
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         else:
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         os.system(command)
@@ -69,11 +69,11 @@ elif decomposition == "CPD-EPC" or decomposition == "cpd-epc":
 
     for items in max_ranks:
         if device == "cpu":
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         else:
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         os.system(command)
@@ -90,11 +90,11 @@ else:
                                            input_img_size=(1, 3, 256, 128), device=device)
     for items in max_ranks:
         if device == "cpu":
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         else:
-            command = """python3 layer_decomposition.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
+            command = """python3 layer_decomposer.py --layer={0} --rank={1} --eps={2} --device={3} --dpath={4} --mpath={5} --tlabels={6} --vlabels={7} --ranks_dir={8} --experiment={9} --attr_num={10}""".format(
                 items, max_ranks[items], args.eps, args.device, args.dpath, args.mpath, args.tlabels, args.vlabels,
                 args.ranks_dir, args.experiment, args.attr_num)
         os.system(command)
