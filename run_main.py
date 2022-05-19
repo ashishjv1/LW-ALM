@@ -1,9 +1,6 @@
 from __future__ import print_function, division
 import os
 import torch
-
-from torch.utils.data import Dataset
-
 import torch.utils.data as data
 import torchvision.transforms as transforms
 from PIL import Image
@@ -16,21 +13,21 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Create Model From Ranks")
 parser.add_argument('--data_path',
-                    default='~/Pedestrian_Attribute_Recognition/DATASET/PETA/PETA dataset/',
+                    default='',
                     type=str, required=True, help='Path to datset')
 parser.add_argument('--train_label',
-                    default='~/data_list/peta/PETA_train_list.txt', type=str,
+                    default='', type=str,
                     required=True, help='Train Labels')
 parser.add_argument('--test_label',
-                    default='~/data_list/peta/PETA_test_list.txt', type=str,
+                    default='', type=str,
                     required=True, help='Test Labels')
 parser.add_argument('--eps', default='1e-12', type=float, required=False, help='EPS Value')
 parser.add_argument('--model', default='full', type=str, required=True, help='Model to Test Full(F)/Compressed(c)')
 parser.add_argument('--attr_num', default='26', type=int, required=True, help='(35)PETA or (26)PA-100K')
 parser.add_argument('--experiment', default='PA-100K', type=str, required=True, help='PETA(PETA/peta) or PA-100K(PA)')
-parser.add_argument('--model_path', default='~/final_model/new_final_model_PA-100K_PER_FLOP.pth',
+parser.add_argument('--model_path', default='',
                     type=str, required=True, help='path to saved Compressed model')
-parser.add_argument('--checkpoint_save', default='~/scripts/models', type=str,
+parser.add_argument('--checkpoint_save', default='/checkpoints/', type=str,
                     required=True, help='checkpoint save path')
 parser.add_argument('--checkpoint_load', default='', type=str, required=False, help='checkpoint load path')
 parser.add_argument('--epoch', default='15', type=int, required=False, help='Number of Epochs to train the Network')
@@ -44,6 +41,7 @@ train_list_path = args.train_label
 val_list_path = args.test_label
 EPS = args.eps
 device = args.device
+
 
 ####DATA LOADER CLASS###
 
@@ -71,7 +69,6 @@ class MultiLabelDataset(data.Dataset):
     def __getitem__(self, index):
         img_name, label = self.images[index]
         img = self.loader(os.path.join(self.root, img_name))
-        raw_img = img.copy()
         if self.transform is not None:
             img = self.transform(img)
         return img, torch.Tensor(label)
@@ -146,10 +143,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
     end = time.time()
     for i, _ in enumerate(train_loader):
         input, target = _
-#         target = target.cuda(non_blocking=True)
-        
         target = target.to(device)
-#         input = input.cuda(non_blocking=True)
         input = input.to(device)
         output = model(input)
         bs = target.size(0)
@@ -159,12 +153,12 @@ def train(train_loader, model, criterion, optimizer, epoch):
             # deep supervision
             for k in range(len(output)):
                 out = output[k]
-                loss_list.append(criterion.forward(torch.sigmoid(out), target, epoch))
+                loss_list.append(criterion.forward(torch.sigmoid(out), target))
             loss = sum(loss_list)
             # maximum voting
             output = torch.max(torch.max(torch.max(output[0], output[1]), output[2]), output[3])
         else:
-            loss = criterion.forward(torch.sigmoid(output), target, epoch)
+            loss = criterion.forward(torch.sigmoid(output), target)
 
         # measure accuracy and record loss
         accu = accuracy(output.data, target)
@@ -201,9 +195,7 @@ def validate(val_loader, model, criterion, epoch):
     end = time.time()
     for i, _ in enumerate(val_loader):
         input, target = _
-#         target = target.cuda(non_blocking=True)
         target - target.to(device)
-#         input = input.cuda(non_blocking=True)
         input = input.to(device)
         output = model(input)
 
@@ -214,12 +206,12 @@ def validate(val_loader, model, criterion, epoch):
             # deep supervision
             for k in range(len(output)):
                 out = output[k]
-                loss_list.append(criterion.forward(torch.sigmoid(out), target, epoch))
+                loss_list.append(criterion.forward(torch.sigmoid(out), target))
             loss = sum(loss_list)
             # maximum voting
             output = torch.max(torch.max(torch.max(output[0], output[1]), output[2]), output[3])
         else:
-            loss = criterion.forward(torch.sigmoid(output), target, epoch)
+            loss = criterion.forward(torch.sigmoid(output), target)
 
         # measure accuracy and record loss
         accu = accuracy(output.data, target)
@@ -243,7 +235,7 @@ def validate(val_loader, model, criterion, epoch):
 
 
 ##TEST Function
-def test(val_loader, model, attr_num, description):
+def test(val_loader, model, attr_num, description, epoch):
     model.eval()
     pos_cnt = []
     pos_tol = []
@@ -263,10 +255,8 @@ def test(val_loader, model, attr_num, description):
 
     for i, _ in enumerate(val_loader):
         input, target = _
-#         target = target.cuda(non_blocking=True)
         target - target.to(device)
-#         input = input.cuda(non_blocking=True)
-        input = inout.to(device)
+        input = input.to(device)
         output = model(input)
         bs = target.size(0)
 
@@ -319,10 +309,10 @@ def test(val_loader, model, attr_num, description):
         mA = mA + cur_mA
         print('\t#{:2}: {:18}\t{:4}\{:4}\t{:4}\{:4}\t{:4}\{:4}\t{:.5f}'.format(it, description[it], pos_cnt[it],
                                                                                neg_cnt[it], pos_tol[it], neg_tol[it], (
-                                                                                           pos_cnt[it] + neg_tol[it] -
-                                                                                           neg_cnt[it]), (
-                                                                                           neg_cnt[it] + pos_tol[it] -
-                                                                                           pos_cnt[it]), cur_mA))
+                                                                                       pos_cnt[it] + neg_tol[it] -
+                                                                                       neg_cnt[it]), (
+                                                                                       neg_cnt[it] + pos_tol[it] -
+                                                                                       pos_cnt[it]), cur_mA))
     mA = mA / attr_num
     print('\t' + 'mA:        ' + str(mA))
 
@@ -427,7 +417,7 @@ class Weighted_BCELoss(object):
                                          0.0124]).to(device)
         # self.weights = None
 
-    def forward(self, output, target, epoch):
+    def forward(self, output, target):
         if self.weights is not None:
             cur_weights = torch.exp(target + (1 - target * 2) * self.weights)
             loss = cur_weights * (target * torch.log(output + EPS)) + ((1 - target) * torch.log(1 - output + EPS))
@@ -546,7 +536,6 @@ def main():
             print('')
         else:
             model = models_cpu.__dict__["inception_iccv"](pretrained=True, num_classes=attr_num)
-#             model = torch.nn.DataParallel(model).to(device)
             print('Number of model parameters: {}'.format(
                 sum([p.numel() for p in model.parameters()])))
             print('')
@@ -555,7 +544,7 @@ def main():
 
         PATH = args.model_path
         model = torch.load(PATH)
-        
+
         if args.device == "cuda":
             model.eval()
             model = torch.nn.DataParallel(model).to(device)
@@ -566,17 +555,17 @@ def main():
             model.eval()
     # optionally resume from a checkpoint
 
-    if resume_check:
-        if os.path.isfile(resume):
-            print("=> loading checkpoint '{}'".format(resume))
-            checkpoint = torch.load(resume)
-            start_epoch = checkpoint['epoch']
-            best_accu = checkpoint['best_accu']
-            model.load_state_dict(checkpoint['state_dict'])
-            print("=> loaded checkpoint '{}' (epoch {})"
-                  .format(resume, checkpoint['epoch']))
-        else:
-            print("=> no checkpoint found at '{}'".format(resume))
+    #     if resume_check:
+    #         if os.path.isfile(resume_check):
+    #             print("=> loading checkpoint '{}'".format(resume_check))
+    #             checkpoint = torch.load(resume_check)
+    #             start_epoch = checkpoint['epoch']
+    #             best_accu = checkpoint['best_accu']
+    #             model.load_state_dict(checkpoint['state_dict'])
+    #             print("=> loaded checkpoint '{}' (epoch {})"
+    #                   .format(resume_check, checkpoint['epoch']))
+    #         else:
+    #             print("=> no checkpoint found at '{}'".format(resume_check))
 
     cudnn.benchmark = False
     cudnn.deterministic = True
@@ -597,24 +586,40 @@ def main():
         accu = float(accu)
         accuracy.append(accu)
         v_losses.append(validation_losses)
-        test(val_loader, model, attr_num, description)
+        test(val_loader, model, attr_num, description, epoch)
         # remember best Accu and save checkpoint
-        is_best = accu > best_accu
-        best_accu = max(accu, best_accu)
+        if resume_check:
+            if os.path.isfile(resume_check):
+                print("=> loading checkpoint '{}'".format(resume_check))
+                checkpoint = torch.load(resume_check)
+                start_epoch = checkpoint['epoch']
+                best_accu = checkpoint['best_accu']
+                model.load_state_dict(checkpoint['state_dict'])
+                is_best = accu > best_accu
+                best_accu = max(accu, is_best)
+                print("=> loaded checkpoint '{}' (epoch {})"
+                      .format(resume_check, checkpoint['epoch']))
+            else:
+                print("=> no checkpoint found at '{}'".format(resume_check))
+        else:
+            best_accu = accu
+            is_best = accu > best_accu
+            best_accu = max(accu, is_best)
+
         if epoch in decay_epoch:
             save_checkpoint({
                 'epoch': epoch + 1,
                 'state_dict': model.state_dict(),
-                'best_accu': accu,
+                'best_accu': best_accu,
             }, epoch + 1, prefix)
     return t_losses, v_losses, accuracy
 
 
 if __name__ == '__main__':
     main()
-#     train_loss, validation_loss, accuracy = main()
-#     save_directory = args.loss_accu + '/'
-#     if not os.path.exists(save_directory):
-#         os.makedirs(save_directory)
-#     save_as_dict = {"training_losses": train_loss, "validation_losses": validation_loss, "accuracy": accuracy}
-#     np.save(save_directory + "Losses_and_Accuracy", save_as_dict)
+    train_loss, validation_loss, accuracy = main()
+    save_directory = args.loss_accu + '/'
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
+    save_as_dict = {"training_losses": train_loss, "validation_losses": validation_loss, "accuracy": accuracy}
+    np.save(save_directory + "Losses_and_Accuracy", save_as_dict)
