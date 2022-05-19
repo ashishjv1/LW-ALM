@@ -453,7 +453,7 @@ def main():
     epochs = args.epoch
     decay_epoch = (int((start_epoch + epochs) / 2), epochs - 5)
     batch_size = 32
-    resume_check = args.checkpoint_load
+    # resume_check = args.checkpoint_load
     if args.experiment == "PA-100K" or args.experiment == "PA" or args.experiment == "pa-100k":
         description = ['Female',
                        'AgeOver60',
@@ -587,30 +587,16 @@ def main():
         accuracy.append(accu)
         v_losses.append(validation_losses)
         test(val_loader, model, attr_num, description, epoch)
+
         # remember best Accu and save checkpoint
-        if resume_check:
-            if os.path.isfile(resume_check):
-                print("=> loading checkpoint '{}'".format(resume_check))
-                checkpoint = torch.load(resume_check)
-                start_epoch = checkpoint['epoch']
-                best_accu = checkpoint['best_accu']
-                model.load_state_dict(checkpoint['state_dict'])
-                is_best = accu > best_accu
-                best_accu = max(accu, is_best)
-                print("=> loaded checkpoint '{}' (epoch {})"
-                      .format(resume_check, checkpoint['epoch']))
-            else:
-                print("=> no checkpoint found at '{}'".format(resume_check))
-        else:
-            best_accu = accu
-            is_best = accu > best_accu
-            best_accu = max(accu, is_best)
+        # is_best = accu > best_accu
+        # best_accu = max(accu, best_accu)
 
         if epoch in decay_epoch:
             save_checkpoint({
                 'epoch': epoch + 1,
                 'state_dict': model.state_dict(),
-                'best_accu': best_accu,
+                'best_accu': accu,    ##'best_accu': best_accu,
             }, epoch + 1, prefix)
     return t_losses, v_losses, accuracy
 
