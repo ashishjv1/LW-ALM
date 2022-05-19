@@ -47,7 +47,7 @@ Compression of  Convolutional Layers in Attribute-Specific Localization Model us
 
 5. Use `"run_main.py"` to fine-tune compressed model <br />
    ``` 
-   python3 main.py --model=COMPRESSED --attr_num=26 --experiment=PA-100K --epoch=15 --model_path=path_to_compressed_model --checkpoint_save=path_to_save_checkpoints
+   python3 run_main.py --model=COMPRESSED --attr_num=26 --experiment=PA-100K --epoch=15 --model_path=path_to_compressed_model --checkpoint_save=path_to_save_checkpoints
    ```
 
 Besides,<br />
@@ -57,11 +57,3 @@ example:
 ```
 python3 layer_decomposition.py --layer=main_branch.conv1_7x7_s2 --rank=81 --eps=0.002 --device=cpu --dpath=dataset_path --mpath=model_path --tlabels=data_train_label --vlabels=data_val/test_label --experiment=PA-100K --attr_num=26
 ```
-
-Aditionally,<br />
-
-1. It is recommended to use pretrained model for BN-Inception. The file can be downloaded from: https://www.dropbox.com/sh/z4cnegl1p1tsn8j/AADYxmDA5Of24vtjx3PK1o7Ba?dl=0
-2. There might be problems while installing "flopco-pytorch" directly using pip, in this case the repository 
-can be cloned directly as `https://github.com/juliagusak/flopco-pytorch.git`
-`cd flopco-pytorch`
-`mv flopco ../`
