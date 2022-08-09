@@ -63,10 +63,11 @@ Additionally,
 `cd /flopco-pytorch` `mv flopco ../` 
 
 Test Calibration using Binning:
-
+```
 import numpy
 from utils.binning import binning 
 num_bins = 10
 figsize = (4, 4)
 
 binning(numpy.hstack(preds_original), numpy.hstack(labels), num_bins=num_bins, savename="calibrated_compressed_network.png", figsize=figsize, title="Histogram Binning_PA-100K(Compressed-Caliberated)")
+```
