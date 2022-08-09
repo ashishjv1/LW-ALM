@@ -61,3 +61,12 @@ Additionally,
 1. The pretrained model for BNInception can be found here: https://www.dropbox.com/sh/z4cnegl1p1tsn8j/AADYxmDA5Of24vtjx3PK1o7Ba?dl=0
 2. If there are problems installing flopco directly from pip. Clone the repo: `git clone https://github.com/juliagusak/flopco-pytorch.git`
 `cd /flopco-pytorch` `mv flopco ../` 
+
+Test Calibration using Binning:
+
+import numpy
+from utils.binning import binning 
+num_bins = 10
+figsize = (4, 4)
+
+binning(numpy.hstack(preds_original), numpy.hstack(labels), num_bins=num_bins, savename="calibrated_compressed_network.png", figsize=figsize, title="Histogram Binning_PA-100K(Compressed-Caliberated)")
