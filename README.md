@@ -64,7 +64,7 @@ Additionally,
 
 Test Calibration using Binning:
 ```
-import numpy
+#f03c15import numpy
 from utils.binning import binning 
 num_bins = 10
 figsize = (4, 4)
