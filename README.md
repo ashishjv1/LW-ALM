@@ -63,7 +63,7 @@ Additionally,
 `cd /flopco-pytorch` `mv flopco ../` 
 
 Test Calibration using Binning:
-```
+```python
 #f03c15import numpy
 from utils.binning import binning 
 num_bins = 10
