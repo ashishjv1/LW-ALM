@@ -6,6 +6,7 @@ Compression of  Convolutional Layers in Attribute-Specific Localization Model us
 * Pytorch 1.11
 * Flopco-pytorch 
 * Numpy
+* Tensorly 0.4.4
 
 ## **Datasets**
 
