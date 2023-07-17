@@ -72,3 +72,13 @@ figsize = (4, 4)
 
 binning(numpy.hstack(preds_original), numpy.hstack(labels), num_bins=num_bins, savename="calibrated_compressed_network.png", figsize=figsize, title="Histogram Binning_PA-100K(Compressed-Caliberated)")
 ```
+If this work is helpful for your research, please consider citing the following BibTeX entry.
+
+```bibtex
+@article{jha2023lightweight,
+  title={Lightweight Attribute Localizing Models for Pedestrian Attribute Recognition},
+  author={Jha, Ashish and Ermilov, Dimitrii and Sobolev, Konstantin and Phan, Anh Huy and Ahmadi-Asl, Salman and Ahmed, Naveed and Junejo, Imran and Aghbari, Zaher AL and Baker, Thar and Khedr, Ahmed Mohamed and others},
+  journal={arXiv preprint arXiv:2306.09822},
+  year={2023}
+}
+```
