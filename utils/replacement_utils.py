@@ -3,8 +3,8 @@ import torch
 from torchvision import datasets, transforms, models
 from torch import nn
 
-def batchnorm_callibration(model, train_loader, n_batches = 200000//512,
-                           layer_name = None, device="cuda:0"):
+def batchnorm_callibration(model, train_loader, layer_name = None,
+                           n_batches = 200000//512, device="cuda:0"):
     '''
     Update batchnorm statistics for layers after layer_name
     
